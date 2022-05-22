@@ -16,6 +16,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
 
+
+
 // WHEN I click on the link to the notes page
 // THEN I am presented with a page with existing notes listed in the left-hand column, plus empty fields to enter a new note title and the note’s text in the right-hand column
 app.get('/notes', (req, res) => {
@@ -23,10 +25,7 @@ app.get('/notes', (req, res) => {
 });
 
 app.get('/api/notes', (req, res) => {
-  // console.log(req.method);
   return res.status(200).json(db)
-  // console.log(res.json(db))
-
 });
 
 // add note to db.json
@@ -36,7 +35,7 @@ app.post('/api/notes', (req, res) => {
     const newNote = {
       title,
       text,
-      note_id : uuid(),
+      id : uuid(),
     };
     // get existing notes
     fs.readFile('./Develop/db/db.json', 'utf8', (err, data) => {
@@ -54,9 +53,9 @@ app.post('/api/notes', (req, res) => {
       status: 'success',
       body: newNote,
     };
-    res.status(201).json(response);
+    return res.status(201).json(response);
   } else {
-    res.status(500).json("Error in posting")
+    return res.status(500).json("Error in posting")
   }
 });
 
@@ -71,11 +70,16 @@ app.post('/api/notes', (req, res) => {
 // WHEN I click on the Write icon in the navigation at the top of the page
 // THEN I am presented with empty fields to enter a new note title and the note’s text in the right-hand column
 
-
+app.delete('/api/notes/:id', (req, res) => {
+  const { title, text, id } = req.body; 
+  if(id) {
+    res.send(`'${title}'note was deleted.`)
+  }
+})
 // WHEN I open the Note Taker
 // THEN I am presented with a landing page with a link to a notes page
 app.get('*', (req, res) =>
-  res.sendFile(path.join(__dirname, 'Develop/public/index.html'))
+  res.sendFile(path.join(__dirname, '/public/index.html'))
 );
 
 app.listen(PORT, () => console.log(`App listening on port ${PORT}`));
