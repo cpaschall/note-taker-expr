@@ -3,6 +3,7 @@ const path = require('path');
 const uuid = require('./uuid');
 const db = require('./Develop/db/db.json')
 const fs = require('fs')
+const { readAndAppend } = require('./public/index2.js')
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -13,10 +14,10 @@ app.use(express.json());
 app.use(express.static('public'));
 
 app.get('/notes', (req, res) => {
-    res.sendFile(path.join(__dirname, '/public/notes2.html'));
+    res.sendFile(path.join(__dirname, '/public/notes.html'));
 });
 
-app.post('/notes', (req, res) => {
+app.post('/api/notes', (req, res) => {
     const { title, text } = req.body;
 
     if(req.body) {
@@ -24,19 +25,12 @@ app.post('/notes', (req, res) => {
             title,
             text,
             note_id: uuid(),
-        }
+        };
+        readAndAppend(newNote, db);
+    } else {
+        res.error("Error adding a note.")
     };
-
-    fs.readFile(db, 'utf8', (err, data) => {
-        if(err) {
-            console(err);
-        } else {
-            const parsedData = JSON.parse(data);
-            parsedData.push(newNote);
-            fs.writeFile(db, parsedData);
-        }
-    })
-})
+});
 
 app.get('/api/notes', (req, res) => {
     return res.status(200).json(db)

@@ -19,7 +19,7 @@ app.use(express.static('public'));
 // WHEN I click on the link to the notes page
 // THEN I am presented with a page with existing notes listed in the left-hand column, plus empty fields to enter a new note title and the note’s text in the right-hand column
 app.get('/notes', (req, res) => {
-  res.sendFile(path.join(__dirname, 'Develop/public/notes.html'));
+  res.sendFile(path.join(__dirname, '/public/notes.html'));
 });
 
 app.get('/api/notes', (req, res) => {
@@ -29,13 +29,37 @@ app.get('/api/notes', (req, res) => {
 
 });
 
-
+// add note to db.json
 app.post('/api/notes', (req, res) => {
-  // console.log(req.method);
-  return res.status(200).json(db)
-  // console.log(res.json(db))
+  const { title, text } = req.body;
+  if( title && text) {
+    const newNote = {
+      title,
+      text,
+      note_id : uuid(),
+    };
+    // get existing notes
+    fs.readFile('./Develop/db/db.json', 'utf8', (err, data) => {
+      if(err) {
+        console.error(err);
+      } else {
+        const parsedNotes =JSON.parse(data);
+        parsedNotes.push(newNote);
+        fs.writeFile('./Develop/db/db.json', JSON.stringify(parsedNotes, null, 4), (writeErr) => 
+          writeErr ? console.error(writeErr) : console.info("Successfully added note to database.")
+        );
+      }
+    });
+    const response = {
+      status: 'success',
+      body: newNote,
+    };
+    res.status(201).json(response);
+  } else {
+    res.status(500).json("Error in posting")
+  }
+});
 
-})
 // const { title, text } = 
 
 // WHEN I enter a new note title and the note’s text
