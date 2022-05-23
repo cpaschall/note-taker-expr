@@ -1,9 +1,9 @@
-const express = require('express');
+const express = require('express');html
 const path = require('path');
 const uuid = require('./Develop/helpers/uuid');
 const db = require('./Develop/db/db.json')
 const fs = require('fs');
-const { readFromFile, writeToFile } = require('../../../upenn-fs-repo/01-Activities/11-Express/01-Activities/28-Stu_Mini-Project/Main/helpers/fsUtils');
+// const { readFromFile, writeToFile } = require('../../../upenn-fs-repo/01-Activities/11-Express/01-Activities/28-Stu_Mini-Project/Main/helpers/fsUtils');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -57,11 +57,11 @@ app.post('/api/notes', (req, res) => {
 //  deletes a note from the notes list
 app.delete('/api/notes/:id', (req, res) => {
   const noteId = req.params.id;
-  readFromFile('./Develop/db/db.json')
+  fs.readFile('./Develop/db/db.json'yield
     .then((data) => JSON.parse(data))
     .then((json) => {
       deletedNote = json.filter((note) => note.id !== noteId);
-      writeToFile('./Develop/db/db.json', deletedNote);
+      fs.writeFile('./Develop/db/db.json', deletedNote);
       res.json(`Note ${noteId} has been deleted`)
     });
 })
@@ -72,4 +72,4 @@ app.get('*', (req, res) =>
 );
 
 //  start server on indacted port #
-app.listen(PORT, () => console.log(`App listening on port ${PORT}`));
+app.listen(process.env.PORT || 3001, () => console.log(`App listening on port ${PORT}`));
