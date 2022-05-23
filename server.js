@@ -3,7 +3,6 @@ const path = require('path');
 const uuid = require('./Develop/helpers/uuid');
 const db = require('./Develop/db/db.json')
 const fs = require('fs');
-// const { readFromFile, writeToFile } = require('../../../upenn-fs-repo/01-Activities/11-Express/01-Activities/28-Stu_Mini-Project/Main/helpers/fsUtils');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
