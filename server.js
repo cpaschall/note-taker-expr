@@ -33,13 +33,13 @@ app.post('/api/notes', (req, res) => {
       id : uuid(),
     };
     // get existing notes
-    fs.readFile('./Develop/db/db.json', 'utf8', (err, data) => {
+    fs.readFile('./db.json', 'utf8', (err, data) => {
       if(err) {
         console.error(err);
       } else {
         const parsedNotes =JSON.parse(data);
         parsedNotes.push(newNote);
-        fs.writeFile('./Develop/db/db.json', JSON.stringify(parsedNotes, null, 4), (writeErr) => 
+        fs.writeFile('./db.json', JSON.stringify(parsedNotes, null, 4), (writeErr) => 
           writeErr ? console.error(writeErr) : console.info("Successfully added note to database.")
         );
       }
@@ -57,11 +57,11 @@ app.post('/api/notes', (req, res) => {
 //  deletes a note from the notes list
 app.delete('/api/notes/:id', (req, res) => {
   const noteId = req.params.id;
-  readFromFile('./Develop/db/db.json')
+  readFromFile('./db.json')
     .then((data) => JSON.parse(data))
     .then((json) => {
       deletedNote = json.filter((note) => note.id !== noteId);
-      writeToFile('./Develop/db/db.json', deletedNote);
+      writeToFile('./db.json', deletedNote);
       res.json(`Note ${noteId} has been deleted`)
     });
 })
