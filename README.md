@@ -19,7 +19,7 @@
   ```
   node server
   ```
-  [Note Taker App](http://cpaschall.github.io/note-taker-expr)
+  [Note Taker App](https://note-taker-expr-server.herokuapp.com/)
   ![Note Taker](./Assets/notes.png)
   ![Dispalyed Note](./Assets/displaynote.png)
 
