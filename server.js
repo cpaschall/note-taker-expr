@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
-const uuid = require('./helpers/uuid');
-const db = require('./db.json')
+const uuid = require('./Develop/helpers/uuid');
+const db = require('./Develop/db/db.json')
 const fs = require('fs');
 const { readFromFile, writeToFile } = require('../../../upenn-fs-repo/01-Activities/11-Express/01-Activities/28-Stu_Mini-Project/Main/helpers/fsUtils');
 
@@ -11,11 +11,11 @@ const app = express();
 // Middleware for urlecoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
+app.use(express.static('Develop/public'));
 
 // route to notes.html
 app.get('/notes', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/notes.html'));
+  res.sendFile(path.join(__dirname, 'Develop/public/notes.html'));
 });
 
 // route to notes database (db.json)
@@ -33,13 +33,13 @@ app.post('/api/notes', (req, res) => {
       id : uuid(),
     };
     // get existing notes
-    fs.readFile('./db.json', 'utf8', (err, data) => {
+    fs.readFile('./Develop/db/db.json', 'utf8', (err, data) => {
       if(err) {
         console.error(err);
       } else {
         const parsedNotes =JSON.parse(data);
         parsedNotes.push(newNote);
-        fs.writeFile('./db.json', JSON.stringify(parsedNotes, null, 4), (writeErr) => 
+        fs.writeFile('./Develop/db/db.json', JSON.stringify(parsedNotes, null, 4), (writeErr) => 
           writeErr ? console.error(writeErr) : console.info("Successfully added note to database.")
         );
       }
@@ -57,18 +57,18 @@ app.post('/api/notes', (req, res) => {
 //  deletes a note from the notes list
 app.delete('/api/notes/:id', (req, res) => {
   const noteId = req.params.id;
-  readFromFile('./db.json')
+  readFromFile('./Develop/db/db.json')
     .then((data) => JSON.parse(data))
     .then((json) => {
       deletedNote = json.filter((note) => note.id !== noteId);
-      writeToFile('./db.json', deletedNote);
+      writeToFile('./Develop/db/db.json', deletedNote);
       res.json(`Note ${noteId} has been deleted`)
     });
 })
 
 // routes for all other  GET requests go to index.html page
 app.get('*', (req, res) =>
-  res.sendFile(path.join(__dirname, '/public/index.html'))
+  res.sendFile(path.join(__dirname, 'Develop/public/index.html'))
 );
 
 //  start server on indacted port #
