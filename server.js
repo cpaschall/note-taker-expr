@@ -71,4 +71,4 @@ app.get('*', (req, res) =>
 );
 
 //  start server on indacted port #
-app.listen(process.env.PORT || 3001, () => console.log(`App listening on port ${PORT}`));
+app.listen(PORT, () => console.log(`App listening on port ${PORT}`));
