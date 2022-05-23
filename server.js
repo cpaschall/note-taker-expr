@@ -4,7 +4,8 @@ const express = require('express');
 const path = require('path');
 const uuid = require('./uuid');
 const db = require('./Develop/db/db.json')
-const fs = require('fs')
+const fs = require('fs');
+const { readFromFile, writeToFile } = require('../../../upenn-fs-repo/01-Activities/11-Express/01-Activities/28-Stu_Mini-Project/Main/helpers/fsUtils');
 
 const PORT = process.env.PORT || 3001;
 
@@ -71,10 +72,14 @@ app.post('/api/notes', (req, res) => {
 // THEN I am presented with empty fields to enter a new note title and the note’s text in the right-hand column
 
 app.delete('/api/notes/:id', (req, res) => {
-  const { title, text, id } = req.body; 
-  if(id) {
-    res.send(`'${title}'note was deleted.`)
-  }
+  const noteId = req.params.id;
+  readFromFile('./Develop/db/db.json')
+    .then((data) => JSON.parse(data))
+    .then((json) => {
+      deletedNote = json.filter((note) => note.id !== noteId);
+      writeToFile('./Develop/db/db.json', deletedNote);
+      res.json(`Note ${noteId} has been deleted`)
+    });
 })
 // WHEN I open the Note Taker
 // THEN I am presented with a landing page with a link to a notes page
