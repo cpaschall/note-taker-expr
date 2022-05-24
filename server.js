@@ -56,7 +56,7 @@ app.post('/api/notes', (req, res) => {
 //  deletes a note from the notes list
 app.delete('/api/notes/:id', (req, res) => {
   const noteId = req.params.id;
-  fs.readFile('./Develop/db/db.json'yield
+  fs.readFile('./Develop/db/db.json')
     .then((data) => JSON.parse(data))
     .then((json) => {
       deletedNote = json.filter((note) => note.id !== noteId);
