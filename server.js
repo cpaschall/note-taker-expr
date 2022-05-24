@@ -3,7 +3,8 @@ const path = require('path');
 const uuid = require('./helpers/uuid');
 const db = require('./db/db.json')
 const fs = require('fs');
-
+const util = require('util');
+const readFromFile = util.promisify(fs.readFile);
 const PORT = process.env.PORT || 3001;
 const app = express();
 
@@ -11,6 +12,11 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
+
+const writeToFile = (destination, content) =>
+  fs.writeFile(destination, JSON.stringify(content, null, 4), (err) =>
+    err ? console.error(err) : console.info(`\nData written to ${destination}`)
+);
 
 // route to notes.html
 app.get('/notes', (req, res) => {
@@ -20,6 +26,19 @@ app.get('/notes', (req, res) => {
 // route to notes database (db.json)
 app.get('/api/notes', (req, res) => {
   return res.status(200).json(db)
+});
+
+//  deletes a note from the notes list
+app.delete('/api/notes/:id', (req, res) => {
+  const noteId = req.params.id;
+  // fs.readFile('./db/db.json', 'utf-8', )
+  readFromFile('./db/db.json')
+    .then((data) => JSON.parse(data))
+    .then((json) => {
+      deletedNote = json.filter((note) => note.id !== noteId);
+      writeToFile('./db/db.json', deletedNote);
+      res.json(`Note ${noteId} has been deleted`)
+    });
 });
 
 // add note to db.json
@@ -52,18 +71,6 @@ app.post('/api/notes', (req, res) => {
     return res.status(500).json("Error in posting")
   }
 });
-
-//  deletes a note from the notes list
-app.delete('/api/notes/:id', (req, res) => {
-  const noteId = req.params.id;
-  fs.readFile('./db/db.json')
-    .then((data) => JSON.parse(data))
-    .then((json) => {
-      deletedNote = json.filter((note) => note.id !== noteId);
-      fs.writeFile('./db/db.json', deletedNote);
-      res.json(`Note ${noteId} has been deleted`)
-    });
-})
 
 // routes for all other  GET requests go to index.html page
 app.get('*', (req, res) =>
