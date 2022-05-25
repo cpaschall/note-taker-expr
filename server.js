@@ -18,29 +18,6 @@ const writeToFile = (destination, content) =>
     err ? console.error(err) : console.info(`\nData written to ${destination}`)
 );
 
-// route to notes.html
-app.get('/notes', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/notes.html'));
-});
-
-// route to notes database (db.json)
-app.get('/api/notes', (req, res) => {
-  return res.status(200).json(db)
-});
-
-//  deletes a note from the notes list
-app.delete('/api/notes/:id', (req, res) => {
-  const noteId = req.params.id;
-  // fs.readFile('./db/db.json', 'utf-8', )
-  readFromFile('./db/db.json')
-    .then((data) => JSON.parse(data))
-    .then((json) => {
-      deletedNote = json.filter((note) => note.id !== noteId);
-      writeToFile('./db/db.json', deletedNote);
-      res.json(`Note ${noteId} has been deleted`)
-    });
-});
-
 // add note to db.json
 app.post('/api/notes', (req, res) => {
   const { title, text } = req.body;
@@ -70,6 +47,29 @@ app.post('/api/notes', (req, res) => {
   } else {
     return res.status(500).json("Error in posting")
   }
+});
+
+// route to notes.html
+app.get('/notes', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/notes.html'));
+});
+
+// route to notes database (db.json)
+app.get('/api/notes', (req, res) => {
+  return res.status(200).json(db)
+});
+
+//  deletes a note from the notes list
+app.delete('/api/notes/:id', (req, res) => {
+  const noteId = req.params.id;
+  // fs.readFile('./db/db.json', 'utf-8', )
+  readFromFile('./db/db.json')
+    .then((data) => JSON.parse(data))
+    .then((json) => {
+      deletedNote = json.filter((note) => note.id !== noteId);
+      writeToFile('./db/db.json', deletedNote);
+      res.json(`Note ${noteId} has been deleted`)
+    });
 });
 
 // routes for all other  GET requests go to index.html page
