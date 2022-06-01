@@ -56,7 +56,11 @@ app.get('/notes', (req, res) => {
 
 // route to notes database (db.json)
 app.get('/api/notes', (req, res) => {
-  return res.status(200).json(db)
+  readFromFile('./db/db.json')
+    .then((data) => JSON.parse(data))
+    .then((json) => {
+      return res.status(200).json(json)
+    })
 });
 
 //  deletes a note from the notes list
